@@ -152,6 +152,15 @@
           sessionStorage.setItem('hotelxbudget-base-' + baseBlobSha, html);
         }
 
+        const marketGroupRowBlock = `
+              <tr class="market-group-row">
+                <td class="market-segment-cell">Room Occupied</td>
+                <td colspan="13"></td>
+              </tr>
+`;
+
+        html = html.replace(marketGroupRowBlock, '');
+
         html = html
           .replace('</head>', mobileFixCss + '\n</head>')
           .replace('</body>', mobileFixScript + '\n</body>');
