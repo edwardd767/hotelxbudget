@@ -71,6 +71,41 @@
         </style>
       `;
 
+      const revenueDescriptionCss = `
+        <style id="revenue-description-edit-style">
+          .revenue-table .desc-cell {
+            padding-right: 8px !important;
+          }
+
+          .revenue-desc-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            width: 100%;
+          }
+
+          .revenue-desc-label {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+
+          .revenue-desc-edit {
+            min-width: 46px;
+            height: 24px;
+            border: 1px solid #f28a10;
+            border-radius: 4px;
+            background: #fff;
+            color: #f28a10;
+            font-family: "Poppins", Arial, Helvetica, sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+          }
+        </style>
+      `;
+
       const mobileFixScript = `
         <script id="mobile-sidebar-fix-script">
           (function () {
@@ -137,6 +172,80 @@
         <\/script>
       `;
 
+      const revenueDescriptionScript = `
+        <script id="revenue-description-edit-script">
+          (function () {
+            const savedDescriptions = {};
+
+            function applyRevenueDescriptionEdit() {
+              const table = document.getElementById('revenueTable');
+              if (!table) return;
+
+              table.querySelectorAll('.type-head, .type-cell').forEach(function (cell) {
+                cell.remove();
+              });
+
+              table.querySelectorAll('.group-row td').forEach(function (cell) {
+                cell.colSpan = 14;
+              });
+
+              const totalRow = table.querySelector('.total-row');
+              if (totalRow) {
+                Array.from(totalRow.children).forEach(function (cell) {
+                  if (!cell.className && cell.textContent.trim() === '') cell.remove();
+                });
+              }
+
+              table.querySelectorAll('tr.data-row td.desc-cell').forEach(function (cell, rowIndex) {
+                if (cell.querySelector('.revenue-desc-wrap')) return;
+
+                const key = String(rowIndex);
+                const originalText = cell.textContent.trim();
+                if (!savedDescriptions[key]) savedDescriptions[key] = originalText;
+
+                const wrapper = document.createElement('div');
+                wrapper.className = 'revenue-desc-wrap';
+
+                const label = document.createElement('span');
+                label.className = 'revenue-desc-label';
+                label.textContent = savedDescriptions[key];
+
+                const editBtn = document.createElement('button');
+                editBtn.type = 'button';
+                editBtn.className = 'revenue-desc-edit';
+                editBtn.textContent = 'Edit';
+                editBtn.addEventListener('click', function (event) {
+                  event.stopPropagation();
+                  const newName = window.prompt('Edit Description', label.textContent);
+                  if (newName !== null && newName.trim() !== '') {
+                    savedDescriptions[key] = newName.trim();
+                    label.textContent = savedDescriptions[key];
+                  }
+                });
+
+                cell.textContent = '';
+                wrapper.appendChild(label);
+                wrapper.appendChild(editBtn);
+                cell.appendChild(wrapper);
+              });
+            }
+
+            const patchTimer = setInterval(function () {
+              if (typeof renderRevenuePage !== 'function') return;
+              clearInterval(patchTimer);
+
+              const originalRenderRevenuePage = renderRevenuePage;
+              renderRevenuePage = function () {
+                originalRenderRevenuePage();
+                applyRevenueDescriptionEdit();
+              };
+
+              applyRevenueDescriptionEdit();
+            }, 25);
+          })();
+        <\/script>
+      `;
+
       try {
         const cached = sessionStorage.getItem('hotelxbudget-base-' + baseBlobSha);
         let html = cached;
@@ -162,8 +271,8 @@
         html = html.replace(marketGroupRowBlock, '');
 
         html = html
-          .replace('</head>', mobileFixCss + '\n</head>')
-          .replace('</body>', mobileFixScript + '\n</body>');
+          .replace('</head>', mobileFixCss + revenueDescriptionCss + '\n</head>')
+          .replace('</body>', mobileFixScript + revenueDescriptionScript + '\n</body>');
 
         const pageLoader = document.getElementById('pageLoader');
         if (pageLoader) pageLoader.remove();
