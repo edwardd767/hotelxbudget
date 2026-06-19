@@ -1,0 +1,2371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HotelX - Hotel Settings</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --orange: #ff8a00;
+      --orange-dark: #ff7300;
+      --text: #111111;
+      --muted: #424242;
+      --line: #e4e4e4;
+      --page: #f3f3f3;
+      --white: #ffffff;
+      --shadow: 0 2px 6px rgba(0,0,0,0.16);
+      --sidebar: 284px;
+      --topbar: 66px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: "Poppins", Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background: var(--page);
+      font-size: 14px;
+    }
+
+    .topbar {
+      height: var(--topbar);
+      background: var(--white);
+      display: flex;
+      align-items: center;
+      gap: 21px;
+      padding: 0 25px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 20;
+      box-shadow: 0 2px 5px rgba(0,0,0,.28);
+    }
+
+    .hamburger {
+      width: 22px;
+      height: 18px;
+      display: inline-flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .hamburger span {
+      height: 3px;
+      width: 100%;
+      background: #2b2b2b;
+      border-radius: 3px;
+      display: block;
+    }
+
+    .brand {
+      font-size: 19px;
+      font-weight: 700;
+      letter-spacing: .1px;
+    }
+
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: var(--topbar);
+      width: var(--sidebar);
+      height: calc(100vh - var(--topbar));
+      background: var(--white);
+      overflow-y: auto;
+      z-index: 10;
+      box-shadow: 3px 0 8px rgba(0,0,0,.08);
+      padding: 0 14px 18px 12px;
+    }
+
+    .sidebar::-webkit-scrollbar { width: 9px; }
+    .sidebar::-webkit-scrollbar-track { background: #efefef; border-radius: 10px; }
+    .sidebar::-webkit-scrollbar-thumb { background: #777; border-radius: 10px; }
+
+    .menu-item {
+      position: relative;
+      min-height: 54px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 7px 12px 7px 12px;
+      margin: 0 1px 5px 0;
+      border-radius: 2px;
+      font-size: 17px;
+      font-weight: 500;
+      line-height: 1.12;
+      color: #111;
+    }
+
+    .menu-icon {
+      width: 28px;
+      min-width: 28px;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 22px;
+      filter: saturate(1.1);
+    }
+
+    .menu-text {
+      display: inline-block;
+    }
+
+    .menu-item:not(.active):not(.no-strike) .menu-text {
+      text-decoration: line-through;
+      text-decoration-thickness: 2px;
+    }
+
+    .menu-item:not(.active):not(.no-strike) .badge {
+      text-decoration: line-through;
+      text-decoration-thickness: 2px;
+    }
+
+    .menu-item.active {
+      border: 1.5px solid var(--orange);
+      background: #fff7ed;
+      color: var(--orange);
+      font-weight: 700;
+      margin-top: 6px;
+      min-height: 46px;
+    }
+
+    .menu-item.active .menu-icon {
+      color: var(--orange);
+    }
+
+    .badge {
+      position: absolute;
+      top: -1px;
+      left: 163px;
+      background: #f80f44;
+      color: #fff;
+      min-width: 24px;
+      height: 24px;
+      padding: 0 6px;
+      font-size: 13px;
+      line-height: 24px;
+      border-radius: 50%;
+      text-align: center;
+      font-weight: 700;
+      text-decoration-color: #fff;
+    }
+
+    .menu-item:nth-child(2) .badge { left: 193px; }
+
+    .scroll-cue {
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      color: #777;
+      font-size: 13px;
+      padding-right: 0;
+    }
+
+    .main {
+      margin-left: var(--sidebar);
+      padding: 29px 14px 40px 30px;
+      position: relative;
+      top: var(--topbar);
+      min-height: calc(100vh - var(--topbar));
+    }
+
+    .content-frame {
+      width: 100%;
+    }
+
+    .property-band {
+      position: relative;
+      height: 82px;
+      background: linear-gradient(95deg, #ff8a00 0%, #ff8a00 30%, #ffa000 51%, #ff8700 72%, #fb6e0a 100%);
+      overflow: hidden;
+      border-top: 1px solid #ed7c00;
+    }
+
+    .property-band::before {
+      content: "";
+      position: absolute;
+      width: 640px;
+      height: 280px;
+      border-radius: 50%;
+      background: rgba(255, 219, 33, .82);
+      top: -136px;
+      left: 560px;
+      transform: rotate(-7deg);
+    }
+
+    .property-band::after {
+      content: "";
+      position: absolute;
+      width: 520px;
+      height: 200px;
+      background: rgba(244, 89, 30, .55);
+      transform: skewX(23deg) rotate(2deg);
+      top: -48px;
+      left: 405px;
+    }
+
+    .property-top {
+      position: relative;
+      z-index: 2;
+      height: 54px;
+      display: flex;
+      align-items: center;
+      padding: 9px 12px;
+    }
+
+    .back-box {
+      cursor: pointer;
+      width: 35px;
+      height: 35px;
+      border-radius: 3px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 11px;
+    }
+
+    .back-box svg { width: 18px; height: 18px; stroke: var(--orange); stroke-width: 3; }
+
+    .hotel-title {
+      color: #111;
+      line-height: 1.08;
+      margin-top: 1px;
+      font-weight: 700;
+    }
+
+    .hotel-title .hms {
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .hotel-title .name {
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .sync-btn {
+      position: absolute;
+      right: 13px;
+      top: 16px;
+      z-index: 3;
+      width: 25px;
+      height: 25px;
+      background: #fff;
+      color: var(--orange);
+      border-radius: 50%;
+      box-shadow: 0 1px 4px rgba(0,0,0,.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .crumb {
+      position: relative;
+      z-index: 2;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      padding-left: 12px;
+      border-top: 1px solid rgba(255,255,255,.5);
+      font-size: 12px;
+      font-weight: 600;
+      color: #111;
+    }
+
+    .section-head {
+      height: 45px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px 0 15px;
+      box-shadow: var(--shadow);
+      font-weight: 700;
+      font-size: 15px;
+    }
+
+    .section-head .count {
+      color: #ff7000;
+    }
+
+    .search-icon {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cards {
+      padding: 15px 8px 0 8px;
+    }
+
+    .card {
+      height: 73px;
+      background: #fff;
+      border-radius: 5px;
+      margin: 0 0 5px 0;
+      box-shadow: 0 2px 7px rgba(0,0,0,.18);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 25px 0 16px;
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 800;
+      margin-bottom: 5px;
+      letter-spacing: -.1px;
+    }
+
+    .meta {
+      font-size: 13px;
+      font-weight: 500;
+      color: #111;
+      line-height: 1.1;
+    }
+
+    .num { color: #ff7000; font-weight: 800; }
+
+    .more {
+      width: 28px;
+      height: 39px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .more span {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: #111;
+      display: block;
+    }
+
+
+
+    .more {
+      cursor: pointer;
+      border-radius: 50%;
+      position: relative;
+    }
+
+    .more:hover {
+      background: rgba(0,0,0,.05);
+    }
+
+    .department-action-menu {
+      position: fixed;
+      z-index: 1000;
+      min-width: 188px;
+      background: #fff;
+      border-radius: 3px;
+      box-shadow: 0 3px 12px rgba(0,0,0,.24);
+      padding: 7px 0;
+      display: none;
+      font-family: "Poppins", Arial, Helvetica, sans-serif;
+    }
+
+    .department-action-menu.show {
+      display: block;
+    }
+
+    .department-action-menu .action-menu-item {
+      padding: 11px 18px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #111;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .department-action-menu .action-menu-item:hover {
+      background: #f5f5f5;
+    }
+
+    .fab {
+      position: fixed;
+      right: 13px;
+      bottom: 21px;
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: var(--orange);
+      box-shadow: 0 5px 12px rgba(0,0,0,.35);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 35px;
+      font-weight: 300;
+      z-index: 30;
+    }
+
+    .svg-search {
+      width: 24px;
+      height: 24px;
+      stroke: #151515;
+      stroke-width: 3;
+      fill: none;
+    }
+
+
+
+    .menu-item.clickable {
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .budget-view {
+      width: 100%;
+      padding: 0 0 0 0;
+    }
+
+    .budget-card {
+      height: 66px;
+      background: #fff;
+      border-radius: 5px;
+      margin: 0 0 5px 0;
+      box-shadow: 0 2px 7px rgba(0,0,0,.18);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 30px 0 16px;
+    }
+
+    .budget-title {
+      font-size: 15px;
+      font-weight: 800;
+      margin-bottom: 4px;
+      letter-spacing: -.1px;
+    }
+
+    .budget-updated {
+      font-size: 13px;
+      font-weight: 500;
+      color: #111;
+      line-height: 1.1;
+    }
+
+    .chevron-right {
+      width: 18px;
+      height: 18px;
+      border-right: 4px solid #111;
+      border-bottom: 4px solid #111;
+      transform: rotate(-45deg);
+      margin-right: 2px;
+    }
+
+
+    .budget-card.clickable-card {
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .main.revenue-mode {
+      padding: 0 0 40px 0;
+    }
+
+    .revenue-page {
+      width: 100%;
+      background: #fff;
+      border-radius: 0 0 7px 7px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,.14);
+      font-family: "Poppins", Arial, Helvetica, sans-serif;
+    }
+
+    .revenue-title-bar {
+      height: 36px;
+      background: #cf6c10;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      padding: 0 26px;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .year-row {
+      min-height: 58px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 24px;
+      border-bottom: 1px solid #e8e8e8;
+      flex-wrap: wrap;
+    }
+
+    .year-label {
+      color: #858585;
+      font-size: 16px;
+      font-weight: 400;
+      margin-right: 2px;
+    }
+
+    .year-pill {
+      height: 35px;
+      min-width: 84px;
+      padding: 0 21px;
+      border-radius: 21px;
+      border: 2px solid #d9d9d9;
+      background: #fff;
+      color: #858585;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .year-pill.active-year {
+      background: #f28a10;
+      border-color: #f28a10;
+      color: #fff;
+    }
+
+    .year-pill.add-year {
+      border-color: #f28a10;
+      border-style: dashed;
+      color: #f28a10;
+      background: #fff;
+      min-width: 126px;
+    }
+
+    .revenue-table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      background: #fff;
+    }
+
+    .revenue-table {
+      width: 100%;
+      min-width: 1180px;
+      border-collapse: collapse;
+      table-layout: fixed;
+      font-size: 15px;
+      color: #222;
+    }
+
+    .revenue-table th,
+    .revenue-table td {
+      border: 0;
+      white-space: nowrap;
+    }
+
+    .revenue-table thead th {
+      background: #f28a10;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      text-align: center;
+      height: 40px;
+      border-right: 1px solid rgba(255,255,255,.18);
+    }
+
+    .revenue-table thead tr:first-child th {
+      height: 38px;
+    }
+
+    .revenue-table thead .desc-head {
+      width: 260px;
+      text-align: left;
+      padding-left: 18px;
+    }
+
+    .revenue-table thead .type-head {
+      width: 135px;
+    }
+
+    .revenue-table thead .month-head {
+      font-weight: 500;
+    }
+
+    .revenue-table thead .total-head {
+      width: 110px;
+    }
+
+    .revenue-table td {
+      height: 38px;
+      padding: 0 18px;
+      text-align: center;
+      border-bottom: 1px solid #efefef;
+      font-weight: 400;
+    }
+
+    .revenue-table td.desc-cell {
+      text-align: left;
+      color: #111;
+      font-weight: 400;
+    }
+
+    .revenue-table td.type-cell {
+      text-align: center;
+      padding: 0 8px;
+    }
+
+    .revenue-table tr.data-row:nth-of-type(even) td {
+      background: #fffaf1;
+    }
+
+    .revenue-table tr.group-row td {
+      height: 32px;
+      background: #fff4df;
+      color: #c26300;
+      text-align: center;
+      font-weight: 800;
+      letter-spacing: .4px;
+      border-top: 1px solid #f7d6aa;
+      border-bottom: 1px solid #f7d6aa;
+    }
+
+    .revenue-table tr.total-row td {
+      height: 38px;
+      background: #fff8eb;
+      font-weight: 800;
+      color: #000;
+      border-top: 3px solid #f28a10;
+      border-bottom: none;
+    }
+
+    .revenue-table tr.total-row td.desc-cell {
+      font-size: 16px;
+    }
+
+    .revenue-table .total-amount {
+      color: #f27d00;
+      font-weight: 800;
+    }
+
+    .type-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 58px;
+      height: 20px;
+      padding: 0 10px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .type-badge.hotel {
+      color: #0064e7;
+      background: #e6f0ff;
+    }
+
+    .type-badge.incidental {
+      color: #007a31;
+      background: #ddf3df;
+      min-width: 80px;
+    }
+
+    .type-badge.menux {
+      color: #d36b00;
+      background: #fff0d6;
+      min-width: 68px;
+    }
+
+    .revenue-legend {
+      min-height: 65px;
+      display: flex;
+      align-items: center;
+      gap: 30px;
+      padding: 14px 22px;
+      background: #fff;
+      border-top: 1px solid #e5e5e5;
+      color: #3d4650;
+      font-size: 16px;
+      flex-wrap: wrap;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      white-space: nowrap;
+    }
+
+    .revenue-actions {
+      min-height: 66px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      border-top: 1px solid #e8e8e8;
+    }
+
+    .edit-btn {
+      width: 154px;
+      height: 43px;
+      border: 0;
+      border-radius: 6px;
+      background: #f28a10;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+      font-family: "Poppins", Arial, Helvetica, sans-serif;
+      cursor: pointer;
+    }
+
+
+
+    .year-pill {
+      cursor: pointer;
+      user-select: none;
+      font-family: "Poppins", Arial, Helvetica, sans-serif;
+    }
+
+    .year-pill:hover {
+      box-shadow: 0 1px 4px rgba(0,0,0,.18);
+    }
+
+    .amount-cell.editable {
+      background: #fffdf5;
+      outline: 1px dashed #f28a10;
+      outline-offset: -4px;
+      cursor: text;
+    }
+
+    .amount-cell.editable:focus {
+      background: #ffffff;
+      outline: 2px solid #f28a10;
+      outline-offset: -4px;
+    }
+
+    .edit-btn.save-mode {
+      background: #f28a10;
+    }
+
+    .edit-hint {
+      font-size: 13px;
+      color: #777;
+      margin-left: 14px;
+      display: none;
+    }
+
+    .edit-hint.show {
+      display: inline-block;
+    }
+
+
+
+    .market-page {
+      width: 100%;
+      background: #fff;
+      border-radius: 0 0 7px 7px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,.14);
+      font-family: "Poppins", Arial, Helvetica, sans-serif;
+    }
+
+    .market-table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      background: #fff;
+      border-top: 3px solid #f28a10;
+    }
+
+    .market-table {
+      width: 100%;
+      min-width: 1320px;
+      border-collapse: collapse;
+      table-layout: fixed;
+      font-size: 14px;
+      color: #111;
+    }
+
+    .market-table th,
+    .market-table td {
+      border: 0;
+      white-space: nowrap;
+    }
+
+    .market-table thead th {
+      height: 42px;
+      background: #f28a10;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      text-align: center;
+      border-right: 1px solid rgba(255,255,255,.18);
+    }
+
+    .market-table thead .segment-head {
+      width: 315px;
+      text-align: left;
+      padding-left: 14px;
+      position: sticky;
+      left: 0;
+      z-index: 4;
+      box-shadow: 6px 0 16px rgba(0,0,0,.16);
+    }
+
+    .market-table thead .market-month-head {
+      font-weight: 500;
+    }
+
+    .market-table thead .market-total-head {
+      width: 110px;
+    }
+
+    .market-table td {
+      height: 45px;
+      padding: 0 13px;
+      text-align: center;
+      border-bottom: 1px solid #f0f0f0;
+      font-weight: 400;
+      background: #fff;
+    }
+
+    .market-table .market-segment-cell {
+      width: 315px;
+      text-align: left;
+      padding-left: 14px;
+      position: sticky;
+      left: 0;
+      z-index: 2;
+      background: #fff;
+      box-shadow: 6px 0 16px rgba(0,0,0,.12);
+    }
+
+    .market-table tr.market-data-row:nth-child(even) td {
+      background: #fdf4e8;
+    }
+
+    .market-table tr.market-data-row:nth-child(even) .market-segment-cell {
+      background: #fdf4e8;
+    }
+
+    .market-table tr.market-group-row td {
+      height: 45px;
+      background: #fff;
+      color: #111;
+      font-weight: 800;
+      border-bottom: 1px solid #efefef;
+    }
+
+    .market-table tr.market-group-row .market-segment-cell {
+      background: #fff;
+    }
+
+    .market-table tr.market-total-row td {
+      height: 42px;
+      background: #fff8eb;
+      color: #000;
+      font-weight: 800;
+      border-top: 3px solid #f28a10;
+    }
+
+    .market-table .market-row-total,
+    .market-table .market-grand-total {
+      color: #f27d00;
+      font-weight: 800;
+    }
+
+    .market-value-cell.editable {
+      background: #fffdf5 !important;
+      outline: 1px dashed #f28a10;
+      outline-offset: -4px;
+      cursor: text;
+    }
+
+    .market-value-cell.editable:focus {
+      background: #fff !important;
+      outline: 2px solid #f28a10;
+      outline-offset: -4px;
+    }
+
+    .market-actions {
+      min-height: 66px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      border-top: 1px solid #e8e8e8;
+      box-shadow: 0 -1px 7px rgba(0,0,0,.12);
+      gap: 12px;
+    }
+
+
+
+    .statistics-page {
+      width: 100%;
+      background: #fff;
+      border-radius: 0 0 7px 7px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,.14);
+      font-family: "Poppins", Arial, Helvetica, sans-serif;
+    }
+
+    .statistics-table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      background: #fff;
+      border-top: 3px solid #f28a10;
+    }
+
+    .statistics-table {
+      width: 100%;
+      min-width: 1320px;
+      border-collapse: collapse;
+      table-layout: fixed;
+      font-size: 14px;
+      color: #111;
+    }
+
+    .statistics-table th,
+    .statistics-table td {
+      border: 0;
+      white-space: nowrap;
+    }
+
+    .statistics-table thead th {
+      height: 42px;
+      background: #f28a10;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      text-align: center;
+      border-right: 1px solid rgba(255,255,255,.18);
+    }
+
+    .statistics-table thead .statistic-head {
+      width: 315px;
+      text-align: left;
+      padding-left: 14px;
+      position: sticky;
+      left: 0;
+      z-index: 4;
+      box-shadow: 6px 0 16px rgba(0,0,0,.16);
+    }
+
+    .statistics-table thead .statistic-month-head {
+      font-weight: 500;
+    }
+
+    .statistics-table thead .statistic-total-head {
+      width: 110px;
+    }
+
+    .statistics-table td {
+      height: 45px;
+      padding: 0 13px;
+      text-align: center;
+      border-bottom: 1px solid #f0f0f0;
+      font-weight: 400;
+      background: #fff;
+    }
+
+    .statistics-table .statistic-item-cell {
+      width: 315px;
+      text-align: left;
+      padding-left: 14px;
+      position: sticky;
+      left: 0;
+      z-index: 2;
+      background: #fff;
+      box-shadow: 6px 0 16px rgba(0,0,0,.12);
+    }
+
+    .statistics-table tr.statistic-data-row:nth-child(even) td {
+      background: #fdf4e8;
+    }
+
+    .statistics-table tr.statistic-data-row:nth-child(even) .statistic-item-cell {
+      background: #fdf4e8;
+    }
+
+    .statistics-table tr.statistic-total-row td {
+      height: 42px;
+      background: #fff8eb;
+      color: #000;
+      font-weight: 800;
+      border-top: 3px solid #f28a10;
+    }
+
+    .statistics-table .statistic-row-total,
+    .statistics-table .statistic-grand-total {
+      color: #f27d00;
+      font-weight: 800;
+    }
+
+    .statistic-value-cell.editable {
+      background: #fffdf5 !important;
+      outline: 1px dashed #f28a10;
+      outline-offset: -4px;
+      cursor: text;
+    }
+
+    .statistic-value-cell.editable:focus {
+      background: #fff !important;
+      outline: 2px solid #f28a10;
+      outline-offset: -4px;
+    }
+
+    .statistics-actions {
+      min-height: 66px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      border-top: 1px solid #e8e8e8;
+      box-shadow: 0 -1px 7px rgba(0,0,0,.12);
+      gap: 12px;
+    }
+
+
+
+    .incidental-list {
+      padding: 15px 8px 0 8px;
+      background: var(--page);
+    }
+
+    .incidental-card {
+      min-height: 64px;
+      background: #fff;
+      border-radius: 5px;
+      margin: 0 0 7px 0;
+      box-shadow: 0 2px 7px rgba(0,0,0,.18);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 22px 10px 12px;
+    }
+
+    .incidental-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .incidental-thumb {
+      width: 56px;
+      height: 36px;
+      border-radius: 4px;
+      background: #1c1c1c;
+      position: relative;
+      overflow: hidden;
+      flex: 0 0 auto;
+    }
+
+    .incidental-thumb::before {
+      content: "";
+      position: absolute;
+      left: 4px;
+      top: 4px;
+      width: 18px;
+      height: 14px;
+      background: #f3f3f3;
+      border-radius: 2px;
+    }
+
+    .incidental-thumb::after {
+      content: "";
+      position: absolute;
+      left: 7px;
+      top: 13px;
+      width: 30px;
+      height: 19px;
+      background: linear-gradient(135deg, transparent 0 42%, #6cc65f 43% 56%, transparent 57% 100%);
+      transform: rotate(-6deg);
+    }
+
+    .incidental-title {
+      font-size: 15px;
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 5px;
+    }
+
+    .incidental-amount {
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1.1;
+      color: #111;
+    }
+
+    .incidental-detail-page {
+      width: 100%;
+      min-height: calc(100vh - 150px);
+      background: #fff;
+      font-family: "Poppins", Arial, Helvetica, sans-serif;
+      box-shadow: 0 1px 3px rgba(0,0,0,.14);
+    }
+
+    .detail-form {
+      width: 100%;
+      max-width: 700px;
+      padding: 28px 22px 18px 22px;
+      background: #fff;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .form-group {
+      flex: 1 1 0;
+      min-width: 0;
+    }
+
+    .form-group.full {
+      width: 100%;
+      flex-basis: 100%;
+    }
+
+    .form-label {
+      display: block;
+      color: #79818a;
+      font-size: 14px;
+      font-weight: 400;
+      margin-bottom: 4px;
+    }
+
+    .form-control {
+      width: 100%;
+      height: 31px;
+      border: 0;
+      border-bottom: 1px solid #777;
+      outline: none;
+      background: transparent;
+      font-family: "Poppins", Arial, Helvetica, sans-serif;
+      font-size: 20px;
+      color: #111;
+      padding: 0 0 3px 0;
+    }
+
+    .form-control.select-like {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-right: 8px;
+    }
+
+    .select-arrow {
+      width: 0;
+      height: 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-top: 6px solid #777;
+      margin-left: 10px;
+      flex: 0 0 auto;
+    }
+
+    .outlet-field .form-label,
+    .outlet-field .form-control {
+      color: #ff2929;
+    }
+
+    .outlet-field .form-control {
+      border-bottom-color: #ff2929;
+    }
+
+    .checkbox-list {
+      margin-top: 16px;
+      margin-bottom: 15px;
+    }
+
+    .check-row {
+      min-height: 40px;
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      font-size: 15px;
+      font-weight: 500;
+      color: #111;
+    }
+
+    .check-row input {
+      width: 18px;
+      height: 18px;
+      accent-color: #ff8a00;
+      cursor: pointer;
+    }
+
+    .check-row.disabled {
+      color: #9aa0a6;
+    }
+
+    .check-row.disabled input {
+      cursor: not-allowed;
+    }
+
+    .detail-save-bar {
+      min-height: 62px;
+      background: #fff;
+      border-top: 1px solid #e8e8e8;
+      box-shadow: 0 -1px 7px rgba(0,0,0,.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: sticky;
+      bottom: 0;
+      margin-top: 4px;
+    }
+
+    .save-btn {
+      width: 145px;
+      height: 43px;
+      border: 0;
+      border-radius: 5px;
+      background: #ff8a00;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+      font-family: "Poppins", Arial, Helvetica, sans-serif;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,.22);
+    }
+
+    .crumb .crumb-edit {
+      margin-left: auto;
+      padding-right: 13px;
+      color: #111;
+      font-weight: 700;
+    }
+
+    @media (max-width: 900px) {
+      :root { --sidebar: 230px; }
+      .menu-item { font-size: 14px; gap: 10px; }
+      .menu-icon { width: 24px; min-width: 24px; font-size: 19px; }
+      .badge { left: 135px; }
+      .menu-item:nth-child(2) .badge { left: 160px; }
+      .main { padding-left: 18px; }
+    }
+
+    @media (max-width: 700px) {
+      .sidebar { transform: translateX(-100%); }
+      .main { margin-left: 0; padding: 20px 10px 40px; }
+      .property-band { height: 76px; }
+      .card { height: auto; min-height: 72px; padding-top: 12px; padding-bottom: 12px; }
+    }
+
+    @media (max-width: 1200px) {
+      .revenue-table { font-size: 13px; }
+      .revenue-table td { padding: 0 10px; }
+      .revenue-legend { font-size: 14px; gap: 16px; }
+    }
+
+    @media (max-width: 700px) {
+      .main.revenue-mode { padding: 0 0 35px 0; }
+      .revenue-title-bar { padding-left: 16px; }
+      .year-row { padding: 10px 14px; }
+      .year-pill { min-width: 70px; padding: 0 14px; }
+      .year-pill.add-year { min-width: 112px; }
+    }
+
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="hamburger" aria-label="Menu"><span></span><span></span><span></span></div>
+    <div class="brand">HotelX</div>
+  </header>
+
+  <aside class="sidebar">
+    <div class="scroll-cue">▲</div>
+    <div class="menu-item"><span class="menu-icon">🛒</span><span class="menu-text">Room Service</span><span class="badge">8</span></div>
+    <div class="menu-item"><span class="menu-icon">📋</span><span class="menu-text">Service Requests</span><span class="badge">4</span></div>
+    <div class="menu-item"><span class="menu-icon">🎟️</span><span class="menu-text">Package<br>Redemption</span></div>
+    <div class="menu-item"><span class="menu-icon">🏢</span><span class="menu-text">Corp/Govt</span></div>
+    <div class="menu-item"><span class="menu-icon">🧳</span><span class="menu-text">Travel Agents</span></div>
+    <div class="menu-item"><span class="menu-icon">🪪</span><span class="menu-text">Guest Profile</span></div>
+    <div class="menu-item"><span class="menu-icon">📣</span><span class="menu-text">Digital Marketing</span></div>
+    <div class="menu-item"><span class="menu-icon">💹</span><span class="menu-text">Checkout<br>Adjustment</span></div>
+    <div class="menu-item"><span class="menu-icon">📬</span><span class="menu-text">Business Insights</span></div>
+    <div class="menu-item"><span class="menu-icon">📬</span><span class="menu-text">Digital Document</span></div>
+    <div class="menu-item"><span class="menu-icon">📬</span><span class="menu-text">Digital Reporting</span></div>
+    <div class="menu-item"><span class="menu-icon">💳</span><span class="menu-text">City Account</span></div>
+    <div class="menu-item"><span class="menu-icon">💹</span><span class="menu-text">Account Journals</span></div>
+    <div class="menu-item"><span class="menu-icon">💹</span><span class="menu-text">Consolidated e-<br>Invoice</span></div>
+    <div class="menu-item no-strike clickable" id="budgetMenu"><span class="menu-icon">💹</span><span class="menu-text">Budget</span></div>
+    <div class="menu-item active no-strike clickable" id="hotelSettingsMenu"><span class="menu-icon">⚙️</span><span class="menu-text">Hotel Settings</span></div>
+    <div class="menu-item"><span class="menu-icon">⚙️</span><span class="menu-text">Common Settings</span></div>
+    <div class="menu-item"><span class="menu-icon">⚙️</span><span class="menu-text">System Admin</span></div>
+  </aside>
+
+  <main class="main">
+    <div class="content-frame">
+      <section class="property-band" id="propertyBand">
+        <div class="property-top">
+          <div class="back-box">
+            <svg viewBox="0 0 24 24"><path d="M15.5 5L8.5 12l7 7" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="hotel-title">
+            <div class="hms">HMS</div>
+            <div class="name">HOTEL PARADISE</div>
+          </div>
+          <div class="sync-btn">↔</div>
+        </div>
+        <div class="crumb">--- / --- / Department</div>
+      </section>
+
+      <section class="section-head" id="sectionHead">
+        <div>Department <span class="count">(16)</span></div>
+        <div class="search-icon">
+          <svg class="svg-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.8"></circle><path d="M16 16l5 5" stroke-linecap="round"></path></svg>
+        </div>
+      </section>
+
+      <section class="cards" id="contentCards">
+        <article class="card">
+          <div><div class="card-title">Room Revenue</div><div class="meta">Incidental Charges : <span class="num">15</span> | Reason : <span class="num">1</span> | Sales Channel : <span class="num">0</span></div></div>
+          <div class="more"><span></span><span></span><span></span></div>
+        </article>
+        <article class="card">
+          <div><div class="card-title">Breakfast (TA)</div><div class="meta">Incidental Charges : <span class="num">1</span> | Reason : <span class="num">1</span> | Sales Channel : <span class="num">0</span></div></div>
+          <div class="more"><span></span><span></span><span></span></div>
+        </article>
+        <article class="card">
+          <div><div class="card-title">City Ledger</div><div class="meta">Incidental Charges : <span class="num">17</span> | Reason : <span class="num">0</span></div></div>
+          <div class="more"><span></span><span></span><span></span></div>
+        </article>
+        <article class="card">
+          <div><div class="card-title">Food and Beverages</div><div class="meta">Incidental Charges : <span class="num">47</span> | Reason : <span class="num">4</span></div></div>
+          <div class="more"><span></span><span></span><span></span></div>
+        </article>
+        <article class="card">
+          <div><div class="card-title">Front Office</div><div class="meta">Incidental Charges : <span class="num">19</span> | Reason : <span class="num">5</span></div></div>
+          <div class="more"><span></span><span></span><span></span></div>
+        </article>
+        <article class="card">
+          <div><div class="card-title">Hotel Adjustment</div><div class="meta">Incidental Charges : <span class="num">1</span> | Reason : <span class="num">0</span></div></div>
+          <div class="more"><span></span><span></span><span></span></div>
+        </article>
+        <article class="card">
+          <div><div class="card-title">HotelX Alliance</div><div class="meta">Reason : <span class="num">0</span> | Sales Channel : <span class="num">0</span></div></div>
+          <div class="more"><span></span><span></span><span></span></div>
+        </article>
+        <article class="card">
+          <div><div class="card-title">Housekeeping</div><div class="meta">Incidental Charges : <span class="num">8</span> | Reason : <span class="num">7</span> | Sales Channel : <span class="num">0</span></div></div>
+          <div class="more"><span></span><span></span><span></span></div>
+        </article>
+        <article class="card">
+          <div><div class="card-title">Human Resource</div><div class="meta">Incidental Charges : <span class="num">0</span> | Reason : <span class="num">0</span></div></div>
+          <div class="more"><span></span><span></span><span></span></div>
+        </article>
+        <article class="card">
+          <div><div class="card-title">Maintenance</div><div class="meta">Incidental Charges : <span class="num">0</span> | Reason : <span class="num">1</span> | Sales Channel : <span class="num">1</span></div></div>
+          <div class="more"><span></span><span></span><span></span></div>
+        </article>
+      </section>
+    </div>
+  </main>
+
+  <div class="fab">+</div>
+  <div class="department-action-menu" id="departmentActionMenu">
+    <div class="action-menu-item">Incidental Charges</div>
+  </div>
+
+  <script>
+    const budgetMenu = document.getElementById('budgetMenu');
+    const hotelSettingsMenu = document.getElementById('hotelSettingsMenu');
+    const propertyBand = document.getElementById('propertyBand');
+    const sectionHead = document.getElementById('sectionHead');
+    const contentCards = document.getElementById('contentCards');
+    const fab = document.querySelector('.fab');
+    const main = document.querySelector('.main');
+    const backBox = document.querySelector('.back-box');
+    const crumb = document.querySelector('.crumb');
+    const syncBtn = document.querySelector('.sync-btn');
+    const originalCards = contentCards.innerHTML;
+    const departmentActionMenu = document.getElementById('departmentActionMenu');
+
+    let revenueYears = [2026, 2027, 2028];
+    let currentRevenueYear = 2026;
+    let isRevenueEditing = false;
+
+    let marketYears = [2026, 2027, 2028];
+    let currentMarketYear = 2026;
+    let isMarketEditing = false;
+    const monthLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const marketSegments = [
+      'Agoda',
+      'ASEAN 2025',
+      'Flash Sale',
+      'Govt Employee (NS)',
+      'Last Minute Escape 25%',
+      'Loyalty 20%',
+      'Merdeka Promo',
+      'Rayacation',
+      'Raya Promotion',
+      'Return Guest 15%',
+      'Romantika Package',
+      'School Holiday 15%',
+      'Senior Citizen',
+      'Year End Promo 15%'
+    ];
+    const marketData = {};
+
+    let statisticYears = [2026, 2027, 2028];
+    let currentStatisticYear = 2026;
+    let isStatisticEditing = false;
+    const statisticItems = [
+      'Rooms Available',
+      'Total Room Occupied',
+      'Room Occupied With Complimentary',
+      'Complimentary Room',
+      'House Use',
+      'No Of Room Guests',
+      'No Of No Show Room',
+      'Total Rooms',
+      'Out Of Order Room',
+      'Cancellation Room',
+      'Day Use Room'
+    ];
+    const statisticData = {};
+
+    const incidentalCharges = [
+      'Early Checkin',
+      'FO Rounding',
+      'Late Checkout',
+      'Rebate-Room Charges',
+      'Room Charges',
+      'Guest Laundry',
+      'Extra Bed Charges',
+      'Service Charge'
+    ];
+    let selectedIncidentalCharge = 'Room Charges';
+
+    function setActiveMenu(activeMenu) {
+      document.querySelectorAll('.menu-item.active').forEach(item => item.classList.remove('active'));
+      activeMenu.classList.add('active');
+    }
+
+
+    function resetPropertyHeader() {
+      if (syncBtn) syncBtn.style.display = '';
+      if (backBox) {
+        backBox.innerHTML = '<svg viewBox="0 0 24 24"><path d="M15.5 5L8.5 12l7 7" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      }
+    }
+
+    function showBudget() {
+      resetPropertyHeader();
+      hideDepartmentActionMenu();
+      setActiveMenu(budgetMenu);
+      propertyBand.style.display = '';
+      sectionHead.style.display = 'none';
+      crumb.textContent = '--- / --- / Budget';
+      fab.style.display = 'none';
+      main.classList.remove('revenue-mode');
+      isMarketEditing = false;
+      isStatisticEditing = false;
+      contentCards.className = 'budget-view';
+      contentCards.innerHTML = `
+        <article class="budget-card clickable-card" id="revenueCard">
+          <div>
+            <div class="budget-title">Revenue</div>
+            <div class="budget-updated">Last updated on - 19 Jun 2026</div>
+          </div>
+          <div class="chevron-right"></div>
+        </article>
+        <article class="budget-card clickable-card" id="marketSegmentCard">
+          <div>
+            <div class="budget-title">Market Segment</div>
+            <div class="budget-updated">Last updated on - 19 Jun 2026</div>
+          </div>
+          <div class="chevron-right"></div>
+        </article>
+        <article class="budget-card clickable-card" id="statisticsCard">
+          <div>
+            <div class="budget-title">Statistics</div>
+            <div class="budget-updated">Last updated on - 19 Jun 2026</div>
+          </div>
+          <div class="chevron-right"></div>
+        </article>
+      `;
+      const revenueCard = document.getElementById('revenueCard');
+      if (revenueCard) revenueCard.addEventListener('click', showRevenue);
+      const marketSegmentCard = document.getElementById('marketSegmentCard');
+      if (marketSegmentCard) marketSegmentCard.addEventListener('click', showMarketSegment);
+      const statisticsCard = document.getElementById('statisticsCard');
+      if (statisticsCard) statisticsCard.addEventListener('click', showStatistics);
+    }
+
+    function formatAmount(value) {
+      const number = Number(value) || 0;
+      return number.toLocaleString('en-US', { maximumFractionDigits: 0 });
+    }
+
+    function parseAmount(value) {
+      const cleaned = String(value || '').replace(/,/g, '').replace(/[^0-9.-]/g, '');
+      const number = Number(cleaned);
+      return Number.isFinite(number) ? number : 0;
+    }
+
+    function buildYearPills() {
+      return revenueYears.map(year => `
+          <button type="button" class="year-pill ${year === currentRevenueYear ? 'active-year' : ''}" data-year="${year}">${year}</button>
+        `).join('') + `
+          <button type="button" class="year-pill add-year" id="addYearBtn">+ Add Year</button>
+        `;
+    }
+
+    function showRevenue() {
+      resetPropertyHeader();
+      hideDepartmentActionMenu();
+      setActiveMenu(budgetMenu);
+      propertyBand.style.display = '';
+      sectionHead.style.display = 'none';
+      crumb.textContent = '--- / Revenue';
+      fab.style.display = 'none';
+      main.classList.remove('revenue-mode');
+      isRevenueEditing = false;
+      isMarketEditing = false;
+      isStatisticEditing = false;
+      renderRevenuePage();
+    }
+
+    function renderRevenuePage() {
+      contentCards.className = 'revenue-page';
+      contentCards.innerHTML = `
+        <div class="revenue-title-bar">... / Revenue</div>
+        <div class="year-row">
+          <span class="year-label">Year:</span>
+          ${buildYearPills()}
+        </div>
+        <div class="revenue-table-wrap">
+          <table class="revenue-table" id="revenueTable">
+            <thead>
+              <tr>
+                <th class="desc-head" rowspan="2">Description</th>
+                <th class="type-head" rowspan="2">Type</th>
+                <th colspan="12" id="monthlyBudgetHead">Monthly Budget — ${currentRevenueYear}</th>
+                <th class="total-head" rowspan="2">Total</th>
+              </tr>
+              <tr>
+                <th class="month-head">Jan</th>
+                <th class="month-head">Feb</th>
+                <th class="month-head">Mar</th>
+                <th class="month-head">Apr</th>
+                <th class="month-head">May</th>
+                <th class="month-head">Jun</th>
+                <th class="month-head">Jul</th>
+                <th class="month-head">Aug</th>
+                <th class="month-head">Sep</th>
+                <th class="month-head">Oct</th>
+                <th class="month-head">Nov</th>
+                <th class="month-head">Dec</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="group-row"><td colspan="15">HOTEL REVENUE</td></tr>
+              <tr class="data-row">
+                <td class="desc-cell">Room Revenue</td>
+                <td class="type-cell"><span class="type-badge hotel">Hotel</span></td>
+                <td class="amount-cell" data-month="0">28,500</td><td class="amount-cell" data-month="1">26,000</td><td class="amount-cell" data-month="2">31,000</td><td class="amount-cell" data-month="3">30,000</td><td class="amount-cell" data-month="4">29,500</td><td class="amount-cell" data-month="5">33,000</td><td class="amount-cell" data-month="6">35,000</td><td class="amount-cell" data-month="7">34,000</td><td class="amount-cell" data-month="8">27,500</td><td class="amount-cell" data-month="9">26,000</td><td class="amount-cell" data-month="10">29,000</td><td class="amount-cell" data-month="11">32,000</td>
+                <td class="total-amount row-total">361,500</td>
+              </tr>
+              <tr class="group-row"><td colspan="15">INCIDENTAL CHARGES</td></tr>
+              <tr class="data-row">
+                <td class="desc-cell">Guest Laundry</td>
+                <td class="type-cell"><span class="type-badge incidental">Incidental</span></td>
+                <td class="amount-cell" data-month="0">1,200</td><td class="amount-cell" data-month="1">1,100</td><td class="amount-cell" data-month="2">1,300</td><td class="amount-cell" data-month="3">1,250</td><td class="amount-cell" data-month="4">1,150</td><td class="amount-cell" data-month="5">1,400</td><td class="amount-cell" data-month="6">1,500</td><td class="amount-cell" data-month="7">1,450</td><td class="amount-cell" data-month="8">1,100</td><td class="amount-cell" data-month="9">1,050</td><td class="amount-cell" data-month="10">1,200</td><td class="amount-cell" data-month="11">1,300</td>
+                <td class="total-amount row-total">15,000</td>
+              </tr>
+              <tr class="data-row">
+                <td class="desc-cell">Extra Bed Charges</td>
+                <td class="type-cell"><span class="type-badge incidental">Incidental</span></td>
+                <td class="amount-cell" data-month="0">800</td><td class="amount-cell" data-month="1">750</td><td class="amount-cell" data-month="2">900</td><td class="amount-cell" data-month="3">850</td><td class="amount-cell" data-month="4">800</td><td class="amount-cell" data-month="5">950</td><td class="amount-cell" data-month="6">1,000</td><td class="amount-cell" data-month="7">980</td><td class="amount-cell" data-month="8">750</td><td class="amount-cell" data-month="9">700</td><td class="amount-cell" data-month="10">820</td><td class="amount-cell" data-month="11">900</td>
+                <td class="total-amount row-total">10,200</td>
+              </tr>
+              <tr class="group-row"><td colspan="15">MENUX OUTLETS</td></tr>
+              <tr class="data-row">
+                <td class="desc-cell">Café Botanica</td>
+                <td class="type-cell"><span class="type-badge menux">MenuX</span></td>
+                <td class="amount-cell" data-month="0">12,000</td><td class="amount-cell" data-month="1">11,500</td><td class="amount-cell" data-month="2">13,000</td><td class="amount-cell" data-month="3">12,500</td><td class="amount-cell" data-month="4">12,000</td><td class="amount-cell" data-month="5">14,000</td><td class="amount-cell" data-month="6">15,000</td><td class="amount-cell" data-month="7">14,500</td><td class="amount-cell" data-month="8">11,000</td><td class="amount-cell" data-month="9">10,500</td><td class="amount-cell" data-month="10">12,000</td><td class="amount-cell" data-month="11">13,500</td>
+                <td class="total-amount row-total">151,500</td>
+              </tr>
+              <tr class="data-row">
+                <td class="desc-cell">Skybar Lounge</td>
+                <td class="type-cell"><span class="type-badge menux">MenuX</span></td>
+                <td class="amount-cell" data-month="0">9,000</td><td class="amount-cell" data-month="1">8,500</td><td class="amount-cell" data-month="2">9,800</td><td class="amount-cell" data-month="3">9,500</td><td class="amount-cell" data-month="4">9,200</td><td class="amount-cell" data-month="5">10,500</td><td class="amount-cell" data-month="6">11,000</td><td class="amount-cell" data-month="7">10,800</td><td class="amount-cell" data-month="8">8,500</td><td class="amount-cell" data-month="9">8,000</td><td class="amount-cell" data-month="10">9,000</td><td class="amount-cell" data-month="11">10,000</td>
+                <td class="total-amount row-total">113,800</td>
+              </tr>
+              <tr class="total-row">
+                <td class="desc-cell" id="totalRevenueLabel">Total Revenue ${currentRevenueYear}</td>
+                <td></td>
+                <td class="month-total" data-month="0">51,500</td><td class="month-total" data-month="1">47,850</td><td class="month-total" data-month="2">56,000</td><td class="month-total" data-month="3">54,100</td><td class="month-total" data-month="4">52,650</td><td class="month-total" data-month="5">59,850</td><td class="month-total" data-month="6">63,500</td><td class="month-total" data-month="7">61,730</td><td class="month-total" data-month="8">48,850</td><td class="month-total" data-month="9">46,250</td><td class="month-total" data-month="10">52,020</td><td class="month-total" data-month="11">57,700</td>
+                <td class="total-amount grand-total">652,000</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="revenue-actions"><button class="edit-btn" id="editRevenueBtn">Edit</button><span class="edit-hint" id="editHint">Click any monthly amount to amend it.</span></div>
+      `;
+      bindRevenueControls();
+      recalculateRevenueTotals();
+    }
+
+    function bindRevenueControls() {
+      document.querySelectorAll('.year-pill[data-year]').forEach(button => {
+        button.addEventListener('click', () => {
+          currentRevenueYear = Number(button.dataset.year);
+          renderRevenuePage();
+        });
+      });
+
+      const addYearBtn = document.getElementById('addYearBtn');
+      if (addYearBtn) {
+        addYearBtn.addEventListener('click', () => {
+          const nextYear = Math.max(...revenueYears) + 1;
+          revenueYears.push(nextYear);
+          currentRevenueYear = nextYear;
+          renderRevenuePage();
+        });
+      }
+
+      const editButton = document.getElementById('editRevenueBtn');
+      if (editButton) {
+        editButton.addEventListener('click', toggleRevenueEdit);
+      }
+    }
+
+    function toggleRevenueEdit() {
+      isRevenueEditing = !isRevenueEditing;
+      const editButton = document.getElementById('editRevenueBtn');
+      const editHint = document.getElementById('editHint');
+      const amountCells = document.querySelectorAll('.amount-cell');
+
+      amountCells.forEach(cell => {
+        cell.contentEditable = isRevenueEditing ? 'true' : 'false';
+        cell.classList.toggle('editable', isRevenueEditing);
+
+        if (isRevenueEditing && !cell.dataset.editBound) {
+          cell.addEventListener('input', recalculateRevenueTotals);
+          cell.addEventListener('blur', () => {
+            cell.textContent = formatAmount(parseAmount(cell.textContent));
+            recalculateRevenueTotals();
+          });
+          cell.addEventListener('keydown', event => {
+            if (event.key === 'Enter') {
+              event.preventDefault();
+              cell.blur();
+            }
+          });
+          cell.addEventListener('paste', event => {
+            event.preventDefault();
+            const text = (event.clipboardData || window.clipboardData).getData('text');
+            document.execCommand('insertText', false, text.replace(/[^0-9.,-]/g, ''));
+          });
+          cell.dataset.editBound = 'true';
+        }
+      });
+
+      if (editButton) {
+        editButton.textContent = isRevenueEditing ? 'Save' : 'Edit';
+        editButton.classList.toggle('save-mode', isRevenueEditing);
+      }
+      if (editHint) editHint.classList.toggle('show', isRevenueEditing);
+
+      if (isRevenueEditing && amountCells.length) amountCells[0].focus();
+      if (!isRevenueEditing) {
+        amountCells.forEach(cell => cell.textContent = formatAmount(parseAmount(cell.textContent)));
+        recalculateRevenueTotals();
+      }
+    }
+
+    function recalculateRevenueTotals() {
+      const rows = Array.from(document.querySelectorAll('.data-row'));
+      const monthlyTotals = Array(12).fill(0);
+      let grandTotal = 0;
+
+      rows.forEach(row => {
+        let rowTotal = 0;
+        row.querySelectorAll('.amount-cell').forEach((cell, index) => {
+          const value = parseAmount(cell.textContent);
+          rowTotal += value;
+          monthlyTotals[index] += value;
+        });
+        const rowTotalCell = row.querySelector('.row-total');
+        if (rowTotalCell) rowTotalCell.textContent = formatAmount(rowTotal);
+        grandTotal += rowTotal;
+      });
+
+      monthlyTotals.forEach((value, index) => {
+        const totalCell = document.querySelector(`.month-total[data-month="${index}"]`);
+        if (totalCell) totalCell.textContent = formatAmount(value);
+      });
+
+      const grandTotalCell = document.querySelector('.grand-total');
+      if (grandTotalCell) grandTotalCell.textContent = formatAmount(grandTotal);
+
+      const totalLabel = document.getElementById('totalRevenueLabel');
+      if (totalLabel) totalLabel.textContent = `Total Revenue ${currentRevenueYear}`;
+
+      const monthlyHead = document.getElementById('monthlyBudgetHead');
+      if (monthlyHead) monthlyHead.textContent = `Monthly Budget — ${currentRevenueYear}`;
+    }
+
+
+    function getMarketSeedValues(index, year) {
+      const base = [
+        [900, 820, 980, 940, 910, 1020, 1080, 1050, 860, 800, 920, 1000],
+        [150, 140, 180, 165, 170, 190, 210, 200, 160, 150, 170, 185],
+        [320, 300, 360, 340, 330, 390, 410, 400, 310, 295, 330, 370],
+        [110, 105, 120, 118, 115, 130, 140, 135, 112, 108, 120, 128],
+        [260, 240, 280, 270, 250, 310, 330, 320, 245, 230, 260, 290],
+        [210, 200, 230, 220, 215, 240, 260, 250, 205, 195, 220, 235],
+        [180, 170, 210, 200, 195, 230, 250, 240, 185, 175, 205, 220],
+        [140, 130, 160, 155, 150, 175, 190, 185, 145, 135, 155, 170],
+        [230, 215, 260, 250, 240, 280, 300, 290, 225, 210, 240, 265],
+        [200, 190, 220, 215, 205, 235, 255, 245, 195, 185, 210, 225],
+        [170, 160, 190, 185, 175, 205, 220, 215, 165, 155, 180, 195],
+        [190, 180, 210, 205, 195, 225, 245, 235, 185, 175, 200, 215],
+        [120, 115, 135, 130, 125, 145, 155, 150, 118, 112, 128, 140],
+        [250, 235, 280, 270, 260, 300, 320, 310, 245, 230, 265, 290]
+      ];
+      const values = base[index] || Array(12).fill(0);
+      const yearOffset = year - 2026;
+      return values.map(value => Math.max(0, value + (yearOffset * 15)));
+    }
+
+    function ensureMarketYear(year) {
+      if (!marketData[year]) {
+        marketData[year] = marketSegments.map((segment, index) => ({
+          segment,
+          values: getMarketSeedValues(index, year)
+        }));
+      }
+      return marketData[year];
+    }
+
+    function buildMarketYearPills() {
+      return marketYears.map(year => `
+          <button type="button" class="year-pill ${year === currentMarketYear ? 'active-year' : ''}" data-market-year="${year}">${year}</button>
+        `).join('') + `
+          <button type="button" class="year-pill add-year" id="addMarketYearBtn">+ Add Year</button>
+        `;
+    }
+
+    function showMarketSegment() {
+      resetPropertyHeader();
+      hideDepartmentActionMenu();
+      setActiveMenu(budgetMenu);
+      propertyBand.style.display = '';
+      sectionHead.style.display = 'none';
+      crumb.textContent = '--- / Market Segment';
+      fab.style.display = 'none';
+      main.classList.remove('revenue-mode');
+      isMarketEditing = false;
+      isStatisticEditing = false;
+      renderMarketSegmentPage();
+    }
+
+    function renderMarketSegmentPage() {
+      const rows = ensureMarketYear(currentMarketYear);
+      const monthHeaders = monthLabels.map(month => `<th class="market-month-head">${month}</th>`).join('');
+      const rowMarkup = rows.map((row, index) => {
+        const cells = row.values.map((value, monthIndex) => `<td class="market-value-cell" data-market-row="${index}" data-market-month="${monthIndex}">${formatAmount(value)}</td>`).join('');
+        const total = row.values.reduce((sum, value) => sum + value, 0);
+        return `
+              <tr class="market-data-row">
+                <td class="market-segment-cell">${row.segment}</td>
+                ${cells}
+                <td class="market-row-total">${formatAmount(total)}</td>
+              </tr>`;
+      }).join('');
+
+      contentCards.className = 'market-page';
+      contentCards.innerHTML = `
+        <div class="year-row">
+          <span class="year-label">Year:</span>
+          ${buildMarketYearPills()}
+        </div>
+        <div class="market-table-wrap">
+          <table class="market-table" id="marketTable">
+            <thead>
+              <tr>
+                <th class="segment-head" rowspan="2">Segment</th>
+                <th colspan="12" id="marketBudgetHead">Monthly Budget — ${currentMarketYear}</th>
+                <th class="market-total-head" rowspan="2">Total</th>
+              </tr>
+              <tr>${monthHeaders}</tr>
+            </thead>
+            <tbody>
+              <tr class="market-group-row">
+                <td class="market-segment-cell">Room Occupied</td>
+                <td colspan="13"></td>
+              </tr>
+              ${rowMarkup}
+              <tr class="market-total-row">
+                <td class="market-segment-cell" id="marketTotalLabel">Total Room Occupied ${currentMarketYear}</td>
+                ${monthLabels.map((_, index) => `<td class="market-month-total" data-market-month-total="${index}">0</td>`).join('')}
+                <td class="market-grand-total">0</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="market-actions"><button class="edit-btn" id="editMarketBtn">Edit</button><span class="edit-hint" id="marketEditHint">Click any monthly amount to amend it.</span></div>
+      `;
+      bindMarketSegmentControls();
+      recalculateMarketTotals();
+    }
+
+    function bindMarketSegmentControls() {
+      document.querySelectorAll('.year-pill[data-market-year]').forEach(button => {
+        button.addEventListener('click', () => {
+          saveMarketValuesFromTable();
+          currentMarketYear = Number(button.dataset.marketYear);
+          isMarketEditing = false;
+          renderMarketSegmentPage();
+        });
+      });
+
+      const addMarketYearBtn = document.getElementById('addMarketYearBtn');
+      if (addMarketYearBtn) {
+        addMarketYearBtn.addEventListener('click', () => {
+          saveMarketValuesFromTable();
+          const nextYear = Math.max(...marketYears) + 1;
+          marketYears.push(nextYear);
+          currentMarketYear = nextYear;
+          isMarketEditing = false;
+          ensureMarketYear(nextYear);
+          renderMarketSegmentPage();
+        });
+      }
+
+      const editMarketBtn = document.getElementById('editMarketBtn');
+      if (editMarketBtn) editMarketBtn.addEventListener('click', toggleMarketEdit);
+    }
+
+    function saveMarketValuesFromTable() {
+      if (!document.getElementById('marketTable')) return;
+      ensureMarketYear(currentMarketYear);
+      document.querySelectorAll('.market-value-cell').forEach(cell => {
+        const rowIndex = Number(cell.dataset.marketRow);
+        const monthIndex = Number(cell.dataset.marketMonth);
+        if (marketData[currentMarketYear] && marketData[currentMarketYear][rowIndex]) {
+          marketData[currentMarketYear][rowIndex].values[monthIndex] = parseAmount(cell.textContent);
+        }
+      });
+    }
+
+    function toggleMarketEdit() {
+      isMarketEditing = !isMarketEditing;
+      const editButton = document.getElementById('editMarketBtn');
+      const editHint = document.getElementById('marketEditHint');
+      const valueCells = document.querySelectorAll('.market-value-cell');
+
+      valueCells.forEach(cell => {
+        cell.contentEditable = isMarketEditing ? 'true' : 'false';
+        cell.classList.toggle('editable', isMarketEditing);
+
+        if (isMarketEditing && !cell.dataset.marketEditBound) {
+          cell.addEventListener('input', recalculateMarketTotals);
+          cell.addEventListener('blur', () => {
+            cell.textContent = formatAmount(parseAmount(cell.textContent));
+            saveMarketValuesFromTable();
+            recalculateMarketTotals();
+          });
+          cell.addEventListener('keydown', event => {
+            if (event.key === 'Enter') {
+              event.preventDefault();
+              cell.blur();
+            }
+          });
+          cell.addEventListener('paste', event => {
+            event.preventDefault();
+            const text = (event.clipboardData || window.clipboardData).getData('text');
+            document.execCommand('insertText', false, text.replace(/[^0-9.,-]/g, ''));
+          });
+          cell.dataset.marketEditBound = 'true';
+        }
+      });
+
+      if (editButton) editButton.textContent = isMarketEditing ? 'Save' : 'Edit';
+      if (editHint) editHint.classList.toggle('show', isMarketEditing);
+      if (isMarketEditing && valueCells.length) valueCells[0].focus();
+
+      if (!isMarketEditing) {
+        valueCells.forEach(cell => cell.textContent = formatAmount(parseAmount(cell.textContent)));
+        saveMarketValuesFromTable();
+        recalculateMarketTotals();
+      }
+    }
+
+    function recalculateMarketTotals() {
+      const rows = Array.from(document.querySelectorAll('.market-data-row'));
+      const monthlyTotals = Array(12).fill(0);
+      let grandTotal = 0;
+
+      rows.forEach(row => {
+        let rowTotal = 0;
+        row.querySelectorAll('.market-value-cell').forEach((cell, index) => {
+          const value = parseAmount(cell.textContent);
+          rowTotal += value;
+          monthlyTotals[index] += value;
+        });
+        const rowTotalCell = row.querySelector('.market-row-total');
+        if (rowTotalCell) rowTotalCell.textContent = formatAmount(rowTotal);
+        grandTotal += rowTotal;
+      });
+
+      monthlyTotals.forEach((value, index) => {
+        const totalCell = document.querySelector(`.market-month-total[data-market-month-total="${index}"]`);
+        if (totalCell) totalCell.textContent = formatAmount(value);
+      });
+
+      const grandTotalCell = document.querySelector('.market-grand-total');
+      if (grandTotalCell) grandTotalCell.textContent = formatAmount(grandTotal);
+
+      const marketTotalLabel = document.getElementById('marketTotalLabel');
+      if (marketTotalLabel) marketTotalLabel.textContent = `Total Room Occupied ${currentMarketYear}`;
+
+      const marketBudgetHead = document.getElementById('marketBudgetHead');
+      if (marketBudgetHead) marketBudgetHead.textContent = `Monthly Budget — ${currentMarketYear}`;
+    }
+
+
+    function getStatisticSeedValues(index, year) {
+      const base = [
+        [120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120],
+        [84, 78, 91, 88, 86, 96, 101, 99, 82, 79, 87, 94],
+        [82, 76, 89, 86, 84, 94, 99, 97, 80, 77, 85, 92],
+        [2, 2, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [166, 154, 181, 175, 170, 191, 203, 198, 163, 158, 174, 188],
+        [0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0],
+        [125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125],
+        [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5],
+        [3, 4, 2, 3, 3, 2, 2, 3, 4, 4, 3, 2],
+        [4, 3, 5, 4, 4, 5, 6, 5, 3, 3, 4, 5]
+      ];
+      const values = base[index] || Array(12).fill(0);
+      const yearOffset = year - 2026;
+      return values.map(value => Math.max(0, value + (yearOffset * (index === 7 ? 0 : 1))));
+    }
+
+    function ensureStatisticYear(year) {
+      if (!statisticData[year]) {
+        statisticData[year] = statisticItems.map((item, index) => ({
+          item,
+          values: getStatisticSeedValues(index, year)
+        }));
+      }
+      return statisticData[year];
+    }
+
+    function buildStatisticYearPills() {
+      return statisticYears.map(year => `
+          <button type="button" class="year-pill ${year === currentStatisticYear ? 'active-year' : ''}" data-statistic-year="${year}">${year}</button>
+        `).join('') + `
+          <button type="button" class="year-pill add-year" id="addStatisticYearBtn">+ Add Year</button>
+        `;
+    }
+
+    function showStatistics() {
+      resetPropertyHeader();
+      hideDepartmentActionMenu();
+      setActiveMenu(budgetMenu);
+      propertyBand.style.display = '';
+      sectionHead.style.display = 'none';
+      crumb.textContent = '--- / Statistic';
+      fab.style.display = 'none';
+      main.classList.remove('revenue-mode');
+      isRevenueEditing = false;
+      isMarketEditing = false;
+      isStatisticEditing = false;
+      renderStatisticsPage();
+    }
+
+    function renderStatisticsPage() {
+      const rows = ensureStatisticYear(currentStatisticYear);
+      const monthHeaders = monthLabels.map(month => `<th class="statistic-month-head">${month}</th>`).join('');
+      const rowMarkup = rows.map((row, index) => {
+        const cells = row.values.map((value, monthIndex) => `<td class="statistic-value-cell" data-statistic-row="${index}" data-statistic-month="${monthIndex}">${formatAmount(value)}</td>`).join('');
+        const total = row.values.reduce((sum, value) => sum + value, 0);
+        return `
+              <tr class="statistic-data-row">
+                <td class="statistic-item-cell">${row.item}</td>
+                ${cells}
+                <td class="statistic-row-total">${formatAmount(total)}</td>
+              </tr>`;
+      }).join('');
+
+      contentCards.className = 'statistics-page';
+      contentCards.innerHTML = `
+        <div class="revenue-title-bar">... / Statistic</div>
+        <div class="year-row">
+          <span class="year-label">Year:</span>
+          ${buildStatisticYearPills()}
+        </div>
+        <div class="statistics-table-wrap">
+          <table class="statistics-table" id="statisticsTable">
+            <thead>
+              <tr>
+                <th class="statistic-head" rowspan="2">Statistic</th>
+                <th colspan="12" id="statisticBudgetHead">Monthly Budget — ${currentStatisticYear}</th>
+                <th class="statistic-total-head" rowspan="2">Total</th>
+              </tr>
+              <tr>${monthHeaders}</tr>
+            </thead>
+            <tbody>
+              ${rowMarkup}
+              <tr class="statistic-total-row">
+                <td class="statistic-item-cell" id="statisticTotalLabel">Total Statistic ${currentStatisticYear}</td>
+                ${monthLabels.map((_, index) => `<td class="statistic-month-total" data-statistic-month-total="${index}">0</td>`).join('')}
+                <td class="statistic-grand-total">0</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="statistics-actions"><button class="edit-btn" id="editStatisticBtn">Edit</button><span class="edit-hint" id="statisticEditHint">Click any monthly amount to amend it.</span></div>
+      `;
+      bindStatisticsControls();
+      recalculateStatisticTotals();
+    }
+
+    function bindStatisticsControls() {
+      document.querySelectorAll('.year-pill[data-statistic-year]').forEach(button => {
+        button.addEventListener('click', () => {
+          saveStatisticValuesFromTable();
+          currentStatisticYear = Number(button.dataset.statisticYear);
+          isStatisticEditing = false;
+          renderStatisticsPage();
+        });
+      });
+
+      const addStatisticYearBtn = document.getElementById('addStatisticYearBtn');
+      if (addStatisticYearBtn) {
+        addStatisticYearBtn.addEventListener('click', () => {
+          saveStatisticValuesFromTable();
+          const nextYear = Math.max(...statisticYears) + 1;
+          statisticYears.push(nextYear);
+          currentStatisticYear = nextYear;
+          isStatisticEditing = false;
+          ensureStatisticYear(nextYear);
+          renderStatisticsPage();
+        });
+      }
+
+      const editStatisticBtn = document.getElementById('editStatisticBtn');
+      if (editStatisticBtn) editStatisticBtn.addEventListener('click', toggleStatisticEdit);
+    }
+
+    function saveStatisticValuesFromTable() {
+      if (!document.getElementById('statisticsTable')) return;
+      ensureStatisticYear(currentStatisticYear);
+      document.querySelectorAll('.statistic-value-cell').forEach(cell => {
+        const rowIndex = Number(cell.dataset.statisticRow);
+        const monthIndex = Number(cell.dataset.statisticMonth);
+        if (statisticData[currentStatisticYear] && statisticData[currentStatisticYear][rowIndex]) {
+          statisticData[currentStatisticYear][rowIndex].values[monthIndex] = parseAmount(cell.textContent);
+        }
+      });
+    }
+
+    function toggleStatisticEdit() {
+      isStatisticEditing = !isStatisticEditing;
+      const editButton = document.getElementById('editStatisticBtn');
+      const editHint = document.getElementById('statisticEditHint');
+      const valueCells = document.querySelectorAll('.statistic-value-cell');
+
+      valueCells.forEach(cell => {
+        cell.contentEditable = isStatisticEditing ? 'true' : 'false';
+        cell.classList.toggle('editable', isStatisticEditing);
+
+        if (isStatisticEditing && !cell.dataset.statisticEditBound) {
+          cell.addEventListener('input', recalculateStatisticTotals);
+          cell.addEventListener('blur', () => {
+            cell.textContent = formatAmount(parseAmount(cell.textContent));
+            saveStatisticValuesFromTable();
+            recalculateStatisticTotals();
+          });
+          cell.addEventListener('keydown', event => {
+            if (event.key === 'Enter') {
+              event.preventDefault();
+              cell.blur();
+            }
+          });
+          cell.addEventListener('paste', event => {
+            event.preventDefault();
+            const text = (event.clipboardData || window.clipboardData).getData('text');
+            document.execCommand('insertText', false, text.replace(/[^0-9.,-]/g, ''));
+          });
+          cell.dataset.statisticEditBound = 'true';
+        }
+      });
+
+      if (editButton) editButton.textContent = isStatisticEditing ? 'Save' : 'Edit';
+      if (editHint) editHint.classList.toggle('show', isStatisticEditing);
+      if (isStatisticEditing && valueCells.length) valueCells[0].focus();
+
+      if (!isStatisticEditing) {
+        valueCells.forEach(cell => cell.textContent = formatAmount(parseAmount(cell.textContent)));
+        saveStatisticValuesFromTable();
+        recalculateStatisticTotals();
+      }
+    }
+
+    function recalculateStatisticTotals() {
+      const rows = Array.from(document.querySelectorAll('.statistic-data-row'));
+      const monthlyTotals = Array(12).fill(0);
+      let grandTotal = 0;
+
+      rows.forEach(row => {
+        let rowTotal = 0;
+        row.querySelectorAll('.statistic-value-cell').forEach((cell, index) => {
+          const value = parseAmount(cell.textContent);
+          rowTotal += value;
+          monthlyTotals[index] += value;
+        });
+        const rowTotalCell = row.querySelector('.statistic-row-total');
+        if (rowTotalCell) rowTotalCell.textContent = formatAmount(rowTotal);
+        grandTotal += rowTotal;
+      });
+
+      monthlyTotals.forEach((value, index) => {
+        const totalCell = document.querySelector(`.statistic-month-total[data-statistic-month-total="${index}"]`);
+        if (totalCell) totalCell.textContent = formatAmount(value);
+      });
+
+      const grandTotalCell = document.querySelector('.statistic-grand-total');
+      if (grandTotalCell) grandTotalCell.textContent = formatAmount(grandTotal);
+
+      const statisticTotalLabel = document.getElementById('statisticTotalLabel');
+      if (statisticTotalLabel) statisticTotalLabel.textContent = `Total Statistic ${currentStatisticYear}`;
+
+      const statisticBudgetHead = document.getElementById('statisticBudgetHead');
+      if (statisticBudgetHead) statisticBudgetHead.textContent = `Monthly Budget — ${currentStatisticYear}`;
+    }
+
+
+    function showIncidentalChargesListing() {
+      resetPropertyHeader();
+      hideDepartmentActionMenu();
+      setActiveMenu(hotelSettingsMenu);
+      propertyBand.style.display = '';
+      sectionHead.style.display = '';
+      crumb.textContent = '--- / --- / --- / Incidental Charges';
+      sectionHead.innerHTML = `
+        <div>Incidental Charges Listing <span class="count">(8)</span></div>
+        <div class="search-icon">
+          <svg class="svg-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.8"></circle><path d="M16 16l5 5" stroke-linecap="round"></path></svg>
+        </div>
+      `;
+      fab.style.display = 'flex';
+      main.classList.remove('revenue-mode');
+      isRevenueEditing = false;
+      isMarketEditing = false;
+      isStatisticEditing = false;
+      renderIncidentalChargesListing();
+    }
+
+    function renderIncidentalChargesListing() {
+      contentCards.className = 'incidental-list';
+      contentCards.innerHTML = incidentalCharges.map((title) => `
+        <article class="incidental-card" data-charge-title="${title}">
+          <div class="incidental-left">
+            <div class="incidental-thumb" aria-hidden="true"></div>
+            <div>
+              <div class="incidental-title">${title}</div>
+              <div class="incidental-amount">MYR 1.00</div>
+            </div>
+          </div>
+          <div class="more incidental-more" title="More options" data-charge-title="${title}"><span></span><span></span><span></span></div>
+        </article>
+      `).join('');
+
+      document.querySelectorAll('.incidental-more').forEach(button => {
+        button.addEventListener('click', event => {
+          event.stopPropagation();
+          selectedIncidentalCharge = button.dataset.chargeTitle || 'Room Charges';
+          showIncidentalChargeDetail(selectedIncidentalCharge);
+        });
+      });
+    }
+
+    function showIncidentalChargeDetail(title = 'Room Charges') {
+      resetPropertyHeader();
+      hideDepartmentActionMenu();
+      setActiveMenu(hotelSettingsMenu);
+      propertyBand.style.display = '';
+      sectionHead.style.display = 'none';
+      if (backBox) {
+        backBox.innerHTML = '<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      }
+      if (syncBtn) syncBtn.style.display = 'none';
+      crumb.innerHTML = '<span>--- / --- / --- / Incidental Charges</span><span class="crumb-edit">Edit</span>';
+      fab.style.display = 'none';
+      main.classList.remove('revenue-mode');
+      selectedIncidentalCharge = title;
+      contentCards.className = 'incidental-detail-page';
+      contentCards.innerHTML = `
+        <div class="detail-form">
+          <div class="form-row">
+            <div class="form-group full">
+              <label class="form-label">Title</label>
+              <input class="form-control" value="${selectedIncidentalCharge}">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Amount (MYR)</label>
+              <input class="form-control" value="1.00">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Tax Scheme *</label>
+              <div class="form-control select-like"><span>SST-01</span><span class="select-arrow"></span></div>
+            </div>
+          </div>
+          <div class="form-row outlet-field">
+            <div class="form-group">
+              <label class="form-label">Outlet Code</label>
+              <input class="form-control" value="">
+            </div>
+            <div class="form-group"></div>
+          </div>
+
+          <div class="checkbox-list">
+            <label class="check-row"><input type="checkbox"> <span>Rate Element</span></label>
+            <label class="check-row"><input type="checkbox"> <span>GuestApp - F&amp;B</span></label>
+            <label class="check-row"><input type="checkbox"> <span>GuestApp - OnlineShop</span></label>
+            <label class="check-row disabled"><input type="checkbox" disabled> <span>POS Interface</span></label>
+            <label class="check-row disabled"><input type="checkbox" disabled> <span>Event Interface</span></label>
+            <label class="check-row"><input type="checkbox"> <span>Allow Negative</span></label>
+            <label class="check-row"><input type="checkbox" checked> <span>Budget</span></label>
+            <label class="check-row"><input type="checkbox"> <span>Kiosk</span></label>
+            <label class="check-row"><input type="checkbox"> <span>3rd Party POS</span></label>
+            <label class="check-row"><input type="checkbox" checked> <span>e-Invoice</span></label>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">MSIC Code *</label>
+              <div class="form-control select-like"><span>55101</span><span class="select-arrow"></span></div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Classification</label>
+              <div class="form-control select-like"><span>022</span><span class="select-arrow"></span></div>
+            </div>
+          </div>
+        </div>
+        <div class="detail-save-bar"><button class="save-btn" type="button">Save</button></div>
+      `;
+    }
+
+
+    function hideDepartmentActionMenu() {
+      if (departmentActionMenu) departmentActionMenu.classList.remove('show');
+    }
+
+    function showDepartmentActionMenu(trigger) {
+      if (!departmentActionMenu || !trigger) return;
+      const rect = trigger.getBoundingClientRect();
+      departmentActionMenu.classList.add('show');
+
+      const menuWidth = departmentActionMenu.offsetWidth || 188;
+      const menuHeight = departmentActionMenu.offsetHeight || 48;
+      const left = Math.max(8, rect.left - menuWidth - 10);
+      const top = Math.min(window.innerHeight - menuHeight - 8, Math.max(8, rect.top + 5));
+
+      departmentActionMenu.style.left = `${left}px`;
+      departmentActionMenu.style.top = `${top}px`;
+    }
+
+    function bindDepartmentMoreMenus() {
+      document.querySelectorAll('#contentCards.cards .more').forEach(moreButton => {
+        moreButton.setAttribute('title', 'More options');
+        moreButton.onclick = event => {
+          event.stopPropagation();
+          if (departmentActionMenu && departmentActionMenu.classList.contains('show')) {
+            hideDepartmentActionMenu();
+          } else {
+            showDepartmentActionMenu(moreButton);
+          }
+        };
+      });
+    }
+
+    function showHotelSettings() {
+      resetPropertyHeader();
+      setActiveMenu(hotelSettingsMenu);
+      propertyBand.style.display = '';
+      sectionHead.style.display = '';
+      sectionHead.innerHTML = `
+        <div>Department <span class="count">(16)</span></div>
+        <div class="search-icon">
+          <svg class="svg-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.8"></circle><path d="M16 16l5 5" stroke-linecap="round"></path></svg>
+        </div>
+      `;
+      crumb.textContent = '--- / --- / Department';
+      fab.style.display = 'flex';
+      contentCards.className = 'cards';
+      main.classList.remove('revenue-mode');
+      isMarketEditing = false;
+      isStatisticEditing = false;
+      contentCards.innerHTML = originalCards;
+      hideDepartmentActionMenu();
+      bindDepartmentMoreMenus();
+    }
+
+    function handleBackButton() {
+      if (contentCards.classList.contains('incidental-detail-page')) {
+        showIncidentalChargesListing();
+        return;
+      }
+
+      if (contentCards.classList.contains('incidental-list')) {
+        showHotelSettings();
+        return;
+      }
+
+      if (contentCards.classList.contains('statistics-page')) {
+        saveStatisticValuesFromTable();
+        isStatisticEditing = false;
+        showBudget();
+        return;
+      }
+
+      if (contentCards.classList.contains('market-page')) {
+        saveMarketValuesFromTable();
+        isMarketEditing = false;
+        showBudget();
+        return;
+      }
+
+      if (contentCards.classList.contains('revenue-page')) {
+        isRevenueEditing = false;
+        showBudget();
+      }
+    }
+
+    bindDepartmentMoreMenus();
+    const incidentalActionItem = departmentActionMenu ? departmentActionMenu.querySelector('.action-menu-item') : null;
+    if (incidentalActionItem) {
+      incidentalActionItem.addEventListener('click', event => {
+        event.stopPropagation();
+        showIncidentalChargesListing();
+      });
+    }
+    document.addEventListener('click', hideDepartmentActionMenu);
+    window.addEventListener('resize', hideDepartmentActionMenu);
+    window.addEventListener('scroll', hideDepartmentActionMenu, true);
+    budgetMenu.addEventListener('click', showBudget);
+    hotelSettingsMenu.addEventListener('click', showHotelSettings);
+    if (backBox) backBox.addEventListener('click', handleBackButton);
+  </script>
+</body>
+</html>
