@@ -22,7 +22,7 @@
   </style>
 </head>
 <body>
-  <div class="loading">Loading HotelX Budget...</div>
+  <div class="loading" id="pageLoader">Loading HotelX Budget...</div>
   <script>
     (async function loadHotelXBudget() {
       const repo = 'edwardd767/hotelxbudget';
@@ -155,6 +155,9 @@
         html = html
           .replace('</head>', mobileFixCss + '\n</head>')
           .replace('</body>', mobileFixScript + '\n</body>');
+
+        const pageLoader = document.getElementById('pageLoader');
+        if (pageLoader) pageLoader.remove();
 
         document.open();
         document.write(html);
